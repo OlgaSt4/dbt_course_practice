@@ -10,4 +10,10 @@ select
     passenger_name,
     contact_data
 from
-    {{ ref('stg_flights__tickets') }}
+    {{ ref('stg_flights__tickets') }} sft
+    where 
+      sft.passenger_id not in
+      (
+        select passenger_id
+        from {{ ref('staff') }}
+      )
