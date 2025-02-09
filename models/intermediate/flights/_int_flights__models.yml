@@ -9,16 +9,14 @@ models:
       - v: 1
     config:
       contract: {enforced: true}
-    meta:
-      owner: "ol_st90@mail.ru"
-      contact_tg: olyast04
-      status: in_dev
-
+      meta: {owner: "yml_file_owner@gmail.com", contact_tg: olyast04, status: in_dev, my_meta: new}
     columns:
       - name: book_ref
+        description: Идентификатор бронирования
         data_type: bpchar(8)
         constraints:
           - type: not_null
+        tests: [not_null, unique]
       - name: book_date
         data_type: timestamptz
       - name: total_amount
