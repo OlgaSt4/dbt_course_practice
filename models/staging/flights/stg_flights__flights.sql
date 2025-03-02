@@ -5,7 +5,7 @@ config(
 }}
 select
     flight_id,
-    flight_no,
+    flight_no::varchar(10),
     scheduled_departure,
     scheduled_arrival,
     departure_airport,
