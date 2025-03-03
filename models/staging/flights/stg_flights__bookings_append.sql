@@ -6,9 +6,9 @@
     )
 }}
 select
-    book_ref,
+    {{-bookref_to_bigint('book_ref')}} as book_ref,
     book_date,
-    total_amount
+    {{-kopeck_to_ruble(column_name = 'total_amount')}} as total_amount
 from {{ source('demo_src', 'bookings') }}
 {% if is_incremental() %}
 where
