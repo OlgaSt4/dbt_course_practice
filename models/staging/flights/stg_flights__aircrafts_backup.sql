@@ -9,7 +9,7 @@
                     identifier=this.identifier
                 )
             %}
-            {% set beckup_relation = api.Relation.create(
+            {% set backup_relation = api.Relation.create(
                     database = this.database,
                     schema = this.schema,
                     identifier = this.identifier ~ "_" ~ curr_time,
@@ -17,7 +17,7 @@
                 )
             %}
             {% if old_relation %}
-                {% do adapter.rename_relation(old_relation, beckup_relation) %}
+                {% do adapter.rename_relation(old_relation, backup_relation) %}
             {% endif %}
         '
     )
