@@ -18,3 +18,8 @@ select
     {{ concat_columns(['flight_id', 'flight_no'])}} as flight_info
 from
     {{ ref('stg_flights__flights') }}
+
+
+{% for status_value in dbt_utils.get_column_values(table = this, column ='status') %}
+    --{{ status_value }}
+{% endfor %}
