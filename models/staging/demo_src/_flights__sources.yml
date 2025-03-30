@@ -41,6 +41,7 @@ sources:
           - name: fare_conditions
             description: Класс места
       - name: bookings
+        description: Бронирования
         columns:
           - name: book_ref,
           - name: book_date,
