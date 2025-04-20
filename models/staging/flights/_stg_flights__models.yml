@@ -1,0 +1,5 @@
+models:
+  - name: stg_flights__flights
+    columns:
+      - name: status
+

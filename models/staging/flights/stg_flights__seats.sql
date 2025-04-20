@@ -6,7 +6,8 @@
 select
     aircraft_code,
     seat_no,
-    fare_conditions
+    fare_conditions,
+    1 as PP
 from 
     {{ source('demo_src', 'seats') }}
 
