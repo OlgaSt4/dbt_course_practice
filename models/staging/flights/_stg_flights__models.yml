@@ -2,4 +2,55 @@ models:
   - name: stg_flights__flights
     columns:
       - name: status
-
+  - name: stg_flights__seats
+    tests:
+    - dbt_utils.unique_combination_of_columns:
+        combination_of_columns:
+          - aircraft_code
+          - seat_no
+    columns:
+      - name: aircraft_code
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('stg_flights__aircrafts')
+              field: aircraft_code
+      - name: seat_no
+        data_tests:
+          - not_null
+          - seat_no_pattern:
+              config:
+                severity: warn
+      - name: fare_conditions
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['Business', 'Comfort', 'Economy']
+      - name: PP
+  - name: stg_flights__airports
+    dbt_utils.unique_combination_of_columns:
+        combination_of_columns:
+          - airport_name
+          - city
+    columns: 
+      - name: airport_code
+        data_tests:
+          - not_null
+          - unique
+          - airport_code_pattern:
+               config:
+                severity: warn
+      - name: airport_name
+        data_tests:
+          - not_null
+      - name: city
+        data_tests:
+          - not_null
+      - name: coordinates
+        data_tests:
+          - not_null
+      - name: timezone
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['Europe/Volgograd', 'Asia/Omsk', 'Europe/Samara', 'Asia/Chita', 'Asia/Novosibirsk', 'Asia/Krasnoyarsk', 'Asia/Magadan', 'Asia/Kamchatka', 'Asia/Anadyr', 'Asia/Novokuznetsk', 'Asia/Irkutsk', 'Asia/Vladivostok', 'Europe/Kaliningrad', 'Asia/Sakhalin', 'Asia/Yakutsk', 'Europe/Moscow', 'Asia/Yekaterinburg']
