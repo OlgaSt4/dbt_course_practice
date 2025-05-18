@@ -1,0 +1,49 @@
+unit_tests:
+  - name: test_new_row_diff_sched_dep_less_100days
+    description: "Новая строка во время обновления должна подгрузиться, если разница между максимальной датой вылета и датой вылета в новой строке менее 100 дней."
+    model: stg_flights__flights_merge
+    overrides:
+      macros:
+        is_incremental: true
+    given:
+      - input: source('demo_src', 'flights')
+        rows:
+          - {scheduled_departure: 2024-12-15}
+      - input: this
+        rows:
+          - {scheduled_departure: 2025-01-01}
+    expect:
+      rows:
+        - {scheduled_departure: 2024-12-15}
+  - name: test_new_row_diff_sched_dep_more_100days
+    description: "Новая строка во время обновления не должна подгрузиться, если разница между максимальной датой вылета и датой вылета в новой строке больше 100 дней."
+    model: stg_flights__flights_merge
+    overrides:
+      macros:
+        is_incremental: true
+    given:
+      - input: source('demo_src', 'flights')
+        rows:
+          - {scheduled_departure: 2024-01-09}
+      - input: this
+        rows:
+          - {scheduled_departure: 2025-01-01}
+    expect: 
+      rows: []
+  - name: test_new_row_status_changed
+    description: "Во время обновления приходит новая строка для существующего flight_id, но измененным статусом. Строка должна подгрузиться"
+    model: stg_flights__flights_merge
+    overrides:
+      macros:
+        is_incremental: true
+    given:
+      - input: source('demo_src', 'flights')
+        rows:
+          - {flight_id: 36, scheduled_departure: 2025-01-01, status: Arrived}
+      - input: this
+        rows:
+          - {flight_id: 36, scheduled_departure: 2025-01-01, status: Scheduled}
+    expect: 
+      rows: 
+          - {flight_id: 36, scheduled_departure: 2025-01-01, status: Arrived}
+

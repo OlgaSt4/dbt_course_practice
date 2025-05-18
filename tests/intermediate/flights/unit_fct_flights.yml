@@ -1,0 +1,65 @@
+unit_tests:
+  - name: test_fact_departure_after_scheduled_departure
+    description: Время фактического отправления позже запланированного. В поле задержки отправления должно быть положительное число.
+    model: fct_flights
+    given:
+      - input: ref('stg_flights__flights')
+        rows:
+          - {scheduled_departure: 2017-02-17T08:25:00+00:00, actual_departure: 2017-02-17T08:27:00+00:00}
+    expect:
+      rows:
+          - {scheduled_departure: 2017-02-17T08:25:00+00:00, actual_departure: 2017-02-17T08:27:00+00:00, flight_departure_delay: 0:02:00}
+  - name: test_fact_departure_equal_scheduled_departure
+    description: Время фактического отправления равно запланированному. В поле задержки отправления должно быть отрицательное число.
+    model: fct_flights
+    given:
+      - input: ref('stg_flights__flights')
+        rows:
+          - {scheduled_departure: 2017-06-15T06:35:00+00:00, actual_departure: 2017-06-15T06:35:00+00:00}
+    expect:
+      rows:
+          - {scheduled_departure: 2017-06-15T06:35:00+00:00, actual_departure: 2017-06-15T06:35:00+00:00, flight_departure_delay: 0:00:00}
+  - name: test_fact_departure_less_scheduled_departure
+    description: Время фактического отправления меньше запланированного. В поле задержки отправления должен быть 0.
+    model: fct_flights
+    given:
+      - input: ref('stg_flights__flights')
+        rows:
+          - {scheduled_departure: 2017-06-15T06:35:00+00:00, actual_departure: 2017-06-15T06:33:00+00:00}
+    expect:
+      rows:
+          - {scheduled_departure: 2017-06-15T06:35:00+00:00, actual_departure: 2017-06-15T06:33:00+00:00, flight_departure_delay: 0:00:00}
+  - name: test_fact_departure_is_null
+    description: Время фактического отправления пустое. В поле задержки отправления должен быть 0.
+    model: fct_flights
+    given:
+      - input: ref('stg_flights__flights')
+        format: csv
+        rows: |
+          scheduled_departure,actual_departure
+          2017-06-15T06:35:00+00:00,
+    expect:
+      rows:
+          - {scheduled_departure: 2017-06-15T06:35:00+00:00, actual_departure: , flight_departure_delay: 0:00:00}
+  - name: test_fact_departure_and_fact_arrival_is_not_null
+    description: Время фактического отправления и прибытия не пустые. В поле продолжительности полета должно быть положительное число.
+    model: fct_flights
+    given:
+      - input: ref('stg_flights__flights')
+        format: dict
+        rows:
+          - {actual_departure: 2017-06-12T06:39:00+00:00, actual_arrival: 2017-06-12T08:35:00+00:00}
+    expect:
+      rows:
+          - {actual_departure: 2017-06-12T06:39:00+00:00, actual_arrival: 2017-06-12T08:35:00+00:00, actual_duration_flight: 	01:56:00}
+  - name: test_fact_arrival_is_null
+    description: Время фактического прибытия пустое. В поле продолжительности полета должен быть ноль.
+    model: fct_flights
+    given:
+      - input: ref('stg_flights__flights')
+        format: dict
+        rows:
+          - {actual_departure: 2017-06-12T06:39:00+00:00, actual_arrival: }
+    expect:
+      rows:
+          - {actual_departure: 2017-06-12T06:39:00+00:00, actual_arrival: , actual_duration_flight: 	0:00:00}
